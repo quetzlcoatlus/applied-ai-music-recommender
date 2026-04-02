@@ -29,6 +29,20 @@ Some prompts to answer:
 
 You can include a simple diagram or bullet list if helpful.
 
+My system will, based on real-world systems like YouTube and Spotify, prioritize a content-based filtering approach to recommend songs based on the user's preferences for certain features of the songs. A collaboration filtering aproach, which would recommend songs based on the preferences of similar users, is not viable for this project due to the lack of user data.
+
+Each song uses
+- Energy: how energetic the song is (0 to 1)
+- Valence: how positive or happy the song is (0 to 1)
+- Danceability: how suitable the song is for dancing (0 to 1)
+- Acousticness: how acoustic the song is (0 to 1)
+
+The UserProfile stores the user's preferences for each of these features, also on a scale from 0 to 1. It will be inputted by the user when they create their profile on a scale of 1-10, which will then be converted to a scale of 0-1 for the scoring function.
+
+The Recommender computes a score for each song based on the proximity of the song's features to the user's preferences. The closer the song is to the user's preferences, the higher the score. This is done using a Gaussian proximity function, which calculates the distance between the song's features and the user's preferences and assigns a score based on that distance. 
+
+The songs with the highest scores are then recommended to the user.
+
 ---
 
 ## Getting Started
