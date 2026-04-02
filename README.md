@@ -32,6 +32,7 @@ You can include a simple diagram or bullet list if helpful.
 My system will, based on real-world systems like YouTube and Spotify, prioritize a content-based filtering approach to recommend songs based on the user's preferences for certain features of the songs. A collaboration filtering aproach, which would recommend songs based on the preferences of similar users, is not viable for this project due to the lack of user data.
 
 Each song uses
+- Genre: the category of music (e.g., pop, rock, jazz)
 - Energy: how energetic the song is (0 to 1)
 - Valence: how positive or happy the song is (0 to 1)
 - Danceability: how suitable the song is for dancing (0 to 1)
