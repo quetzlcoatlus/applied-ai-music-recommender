@@ -42,6 +42,7 @@ Changing the weights to be (genre=0.20, energy=0.25, valence=0.20, danceability=
 e.g.:
 {
     "genre": "pop",
+    "mood": "chill",
     "energy": 0.40,
     "valence": 0.60,
     "danceability": 0.60,
@@ -61,3 +62,8 @@ pop       0.1    0.0    0.2  1.0    0.6        0.8      0.3
 synthwave 0.3    0.4    0.1  0.6    1.0        0.5      0.4
 indie pop 0.2    0.3    0.4  0.8    0.5        1.0      0.2
 rock      0.0    0.0    0.1  0.3    0.4        0.2      1.0
+
+Similar binary matrix in recommender.py
+
+Changing the weights to be (genre=0.15, mood=0.20, energy=0.20, valence=0.15, danceability=0.15, accousticness=0.15) - these weights can be adjusted based on experimentation.
+

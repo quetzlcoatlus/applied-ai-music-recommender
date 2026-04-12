@@ -17,13 +17,6 @@ Replace this paragraph with your own summary of what your version does.
 
 ## How The System Works
 
-Explain your design in plain language.
-
-Some prompts to answer:
-
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
 - How does your `Recommender` compute a score for each song
 - How do you choose which songs to recommend
 
@@ -33,16 +26,55 @@ My system will, based on real-world systems like YouTube and Spotify, prioritize
 
 Each song uses
 - Genre: the category of music (e.g., pop, rock, jazz)
+- Mood: the mood category of the music (e.g. chill, intense, romantic)
 - Energy: how energetic the song is (0 to 1)
 - Valence: how positive or happy the song is (0 to 1)
 - Danceability: how suitable the song is for dancing (0 to 1)
 - Acousticness: how acoustic the song is (0 to 1)
 
-The UserProfile stores the user's preferences for each of these features, also on a scale from 0 to 1. It will be inputted by the user when they create their profile on a scale of 1-10, which will then be converted to a scale of 0-1 for the scoring function.
+The UserProfile stores the user's preferences for each of these features. For quantitative features they are on a scale from 0 to 1. For qualitative features there is a list associated with the user and they can select N items to prefer. 
 
-The Recommender computes a score for each song based on the proximity of the song's features to the user's preferences. The closer the song is to the user's preferences, the higher the score. This is done using a Gaussian proximity function, which calculates the distance between the song's features and the user's preferences and assigns a score based on that distance. 
+Quantitative preferences will be inputted by the user when they create their profile on a scale of 1-10, which will then be converted to a scale of 0-1 for the scoring function. Qualitative preferences will be added or removed in a dropdown and as rows in a table.
 
-The songs with the highest scores are then recommended to the user.
+The Recommender computes a score for each song based on the weighted-sum proximity of the song's features to the user's preferences. The closer the song is to the user's preferences, the higher the score. This is done using a Gaussian proximity function for quantitative features, and a binary similarity matrix for qualitative features.
+
+Each feature is assigned a set weight:
+- genre=0.15
+- mood=0.20
+- energy=0.20
+- valence=0.15
+- danceability=0.15
+- accousticness=0.15
+
+Each score is multiplied by the weight and they're added up for the final score (hence weighted-sum).
+
+The songs with the highest scores are then recommended to the user in descending order.
+
+Application dataflow: 
+1. Input (user preferences) 
+2. Process (The Loop: Judging every individual song in the CSV using scoring logic) 
+3. Output (The Ranking: Top K Recommendations)
+
+```mermaid
+flowchart TD
+    A[songs.csv] --> B[load_songs]
+    B --> C[Song Dict]
+    C --> D1[Genre similarity lookup]
+    C --> D2[Mood similarity lookup]
+    C --> D3[Gaussian proximity\nenergy · valence · danceability · acousticness]
+    D1 --> E[Weighted Sum → Overall Score]
+    D2 --> E
+    D3 --> E
+    E --> F[Scored Song List]
+    F --> G[Sort descending by score]
+    G --> H[Top K Recommendations]
+```
+
+### Note on biases
+
+I expect the system to require experimentation to optimally balance the weights of each feature. Currently they're all relatively equal, favoring mood and energy.
+
+There is a chance the songs will be lacking diversity as well given the ranking rule is currently just descending order of weighted-sum score.
 
 ---
 
