@@ -26,10 +26,12 @@ class UserProfile:
     Represents a user's taste preferences.
     Required by tests/test_recommender.py
     """
-    favorite_genre: str
-    favorite_mood: str
-    target_energy: float
-    likes_acoustic: bool
+    genre: str
+    mood: str
+    energy: float
+    valence: float
+    danceability: float
+    acousticness: float
 
 class Recommender:
     """
@@ -37,13 +39,16 @@ class Recommender:
     Required by tests/test_recommender.py
     """
     def __init__(self, songs: List[Song]):
+        """Initialize the recommender with a list of songs."""
         self.songs = songs
 
     def recommend(self, user: UserProfile, k: int = 5) -> List[Song]:
+        """Return the top-k songs ranked by score for the given user profile."""
         # TODO: Implement recommendation logic
         return self.songs[:k]
 
     def explain_recommendation(self, user: UserProfile, song: Song) -> str:
+        """Return a human-readable explanation of why a song was recommended."""
         # TODO: Implement explanation logic
         return "Explanation placeholder"
 
@@ -77,9 +82,8 @@ def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tup
     Functional implementation of the recommendation logic.
     Required by src/main.py
     """
-    # TODO: Implement scoring and ranking logic
-    # Expected return format: (song_dict, score, explanation)
-    return []
+    scored = [(song, *score_song(user_prefs, song)) for song in songs]
+    return sorted(scored, key=lambda x: x[1], reverse=True)[:k]
 
 def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, str]:
     """
