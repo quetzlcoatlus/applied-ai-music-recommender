@@ -1,31 +1,7 @@
 from typing import List, Dict, Tuple, Optional
 from dataclasses import dataclass
 
-# Mood similarity matrix — binary match values (0.0–1.0).
-# Grouped by emotional character:
-#   Positive/high-energy: happy, playful, celebratory, spirited, triumphant
-#   Positive/low-energy:  chill, relaxed, focused, dreamy, romantic
-#   Dark/high-energy:     intense, moody
-#   Dark/low-energy:      melancholic, yearning, wistful, nostalgic
-MOOD_SIMILARITY: Dict[str, Dict[str, float]] = {
-    #              hap   chil  int   relx  mood  focu  melan play  nost  drmy  trmp  wist  yearn spir  celb  rom
-    "happy":       {"happy":1.0, "chill":0.2, "intense":0.2, "relaxed":0.2, "moody":0.1, "focused":0.2, "melancholic":0.0, "playful":0.8, "nostalgic":0.2, "dreamy":0.5, "triumphant":0.4, "wistful":0.1, "yearning":0.1, "spirited":0.7, "celebratory":0.8, "romantic":0.5},
-    "chill":       {"happy":0.2, "chill":1.0, "intense":0.0, "relaxed":0.9, "moody":0.3, "focused":0.7, "melancholic":0.3, "playful":0.1, "nostalgic":0.4, "dreamy":0.5, "triumphant":0.0, "wistful":0.5, "yearning":0.3, "spirited":0.1, "celebratory":0.0, "romantic":0.3},
-    "intense":     {"happy":0.2, "chill":0.0, "intense":1.0, "relaxed":0.0, "moody":0.4, "focused":0.1, "melancholic":0.0, "playful":0.2, "nostalgic":0.1, "dreamy":0.1, "triumphant":0.7, "wistful":0.0, "yearning":0.0, "spirited":0.5, "celebratory":0.4, "romantic":0.0},
-    "relaxed":     {"happy":0.2, "chill":0.9, "intense":0.0, "relaxed":1.0, "moody":0.2, "focused":0.5, "melancholic":0.3, "playful":0.1, "nostalgic":0.4, "dreamy":0.5, "triumphant":0.0, "wistful":0.5, "yearning":0.3, "spirited":0.1, "celebratory":0.0, "romantic":0.4},
-    "moody":       {"happy":0.1, "chill":0.3, "intense":0.4, "relaxed":0.2, "moody":1.0, "focused":0.2, "melancholic":0.5, "playful":0.1, "nostalgic":0.4, "dreamy":0.3, "triumphant":0.2, "wistful":0.5, "yearning":0.6, "spirited":0.1, "celebratory":0.0, "romantic":0.3},
-    "focused":     {"happy":0.2, "chill":0.7, "intense":0.1, "relaxed":0.5, "moody":0.2, "focused":1.0, "melancholic":0.1, "playful":0.1, "nostalgic":0.3, "dreamy":0.3, "triumphant":0.0, "wistful":0.3, "yearning":0.2, "spirited":0.2, "celebratory":0.0, "romantic":0.2},
-    "melancholic": {"happy":0.0, "chill":0.3, "intense":0.0, "relaxed":0.3, "moody":0.5, "focused":0.1, "melancholic":1.0, "playful":0.0, "nostalgic":0.5, "dreamy":0.2, "triumphant":0.0, "wistful":0.7, "yearning":0.8, "spirited":0.0, "celebratory":0.0, "romantic":0.2},
-    "playful":     {"happy":0.8, "chill":0.1, "intense":0.2, "relaxed":0.1, "moody":0.1, "focused":0.1, "melancholic":0.0, "playful":1.0, "nostalgic":0.1, "dreamy":0.3, "triumphant":0.1, "wistful":0.0, "yearning":0.0, "spirited":0.6, "celebratory":0.7, "romantic":0.3},
-    "nostalgic":   {"happy":0.2, "chill":0.4, "intense":0.1, "relaxed":0.4, "moody":0.4, "focused":0.3, "melancholic":0.5, "playful":0.1, "nostalgic":1.0, "dreamy":0.4, "triumphant":0.0, "wistful":0.8, "yearning":0.6, "spirited":0.1, "celebratory":0.0, "romantic":0.3},
-    "dreamy":      {"happy":0.5, "chill":0.5, "intense":0.1, "relaxed":0.5, "moody":0.3, "focused":0.3, "melancholic":0.2, "playful":0.3, "nostalgic":0.4, "dreamy":1.0, "triumphant":0.0, "wistful":0.4, "yearning":0.2, "spirited":0.3, "celebratory":0.2, "romantic":0.7},
-    "triumphant":  {"happy":0.4, "chill":0.0, "intense":0.7, "relaxed":0.0, "moody":0.2, "focused":0.0, "melancholic":0.0, "playful":0.1, "nostalgic":0.0, "dreamy":0.0, "triumphant":1.0, "wistful":0.0, "yearning":0.0, "spirited":0.6, "celebratory":0.5, "romantic":0.0},
-    "wistful":     {"happy":0.1, "chill":0.5, "intense":0.0, "relaxed":0.5, "moody":0.5, "focused":0.3, "melancholic":0.7, "playful":0.0, "nostalgic":0.8, "dreamy":0.4, "triumphant":0.0, "wistful":1.0, "yearning":0.7, "spirited":0.0, "celebratory":0.0, "romantic":0.3},
-    "yearning":    {"happy":0.1, "chill":0.3, "intense":0.0, "relaxed":0.3, "moody":0.6, "focused":0.2, "melancholic":0.8, "playful":0.0, "nostalgic":0.6, "dreamy":0.2, "triumphant":0.0, "wistful":0.7, "yearning":1.0, "spirited":0.0, "celebratory":0.0, "romantic":0.4},
-    "spirited":    {"happy":0.7, "chill":0.1, "intense":0.5, "relaxed":0.1, "moody":0.1, "focused":0.2, "melancholic":0.0, "playful":0.6, "nostalgic":0.1, "dreamy":0.3, "triumphant":0.6, "wistful":0.0, "yearning":0.0, "spirited":1.0, "celebratory":0.8, "romantic":0.3},
-    "celebratory": {"happy":0.8, "chill":0.0, "intense":0.4, "relaxed":0.0, "moody":0.0, "focused":0.0, "melancholic":0.0, "playful":0.7, "nostalgic":0.0, "dreamy":0.2, "triumphant":0.5, "wistful":0.0, "yearning":0.0, "spirited":0.8, "celebratory":1.0, "romantic":0.2},
-    "romantic":    {"happy":0.5, "chill":0.3, "intense":0.0, "relaxed":0.4, "moody":0.3, "focused":0.2, "melancholic":0.2, "playful":0.3, "nostalgic":0.3, "dreamy":0.7, "triumphant":0.0, "wistful":0.3, "yearning":0.4, "spirited":0.3, "celebratory":0.2, "romantic":1.0},
-}
+from similarity_matrices import GENRE_SIMILARITY, MOOD_SIMILARITY
 
 @dataclass
 class Song:
@@ -104,3 +80,42 @@ def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tup
     # TODO: Implement scoring and ranking logic
     # Expected return format: (song_dict, score, explanation)
     return []
+
+def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, str]:
+    """
+    Implements "Algorithm Recipe" from Phase 2.
+    Calculates overall score for individual song based on weighted-sum
+    Weights are: genre=0.15, mood=0.20, energy=0.20, valence=0.15, danceability=0.15, accousticness=0.15
+    - Song features acquired from load_songs()
+    - Genre similarity value taken from GENRE_SIMILARITY
+    - Mood similarity value taken from MOOD_SIMILARITY
+    - Scores for numerical values are generated with
+        - exp(-5 * (song_value - preference_value)^2) function e^x
+    Returns an overall score float and a string reason for score.
+    """
+    import math
+
+    genre_score = GENRE_SIMILARITY.get(user_prefs["genre"], {}).get(song["genre"], 0.0)
+    mood_score = MOOD_SIMILARITY.get(user_prefs["mood"], {}).get(song["mood"], 0.0)
+
+    energy_score = math.exp(-5 * (song["energy"] - user_prefs["energy"]) ** 2)
+    valence_score = math.exp(-5 * (song["valence"] - user_prefs["valence"]) ** 2)
+    danceability_score = math.exp(-5 * (song["danceability"] - user_prefs["danceability"]) ** 2)
+    acousticness_score = math.exp(-5 * (song["acousticness"] - user_prefs["acousticness"]) ** 2)
+
+    overall_score = (
+        0.15 * genre_score +
+        0.20 * mood_score +
+        0.20 * energy_score +
+        0.15 * valence_score +
+        0.15 * danceability_score +
+        0.15 * acousticness_score
+    )
+
+    explanation = (
+        f"genre={genre_score:.2f}, mood={mood_score:.2f}, "
+        f"energy={energy_score:.2f}, valence={valence_score:.2f}, "
+        f"danceability={danceability_score:.2f}, acousticness={acousticness_score:.2f}"
+    )
+
+    return overall_score, explanation

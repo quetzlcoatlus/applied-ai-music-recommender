@@ -32,9 +32,9 @@ Each song uses
 - Danceability: how suitable the song is for dancing (0 to 1)
 - Acousticness: how acoustic the song is (0 to 1)
 
-The UserProfile stores the user's preferences for each of these features. For quantitative features they are on a scale from 0 to 1. For qualitative features there is a list associated with the user and they can select N items to prefer. 
+The UserProfile stores the user's preferences for each of these features. For quantitative features they are on a scale from 0 to 1. For qualitative features there is a single favorite associated with the user for genre and mood. 
 
-Quantitative preferences will be inputted by the user when they create their profile on a scale of 1-10, which will then be converted to a scale of 0-1 for the scoring function. Qualitative preferences will be added or removed in a dropdown and as rows in a table.
+Quantitative preferences will be inputted by the user when they create their profile on a scale of 1-10, which will then be converted to a scale of 0-1 for the scoring function. Qualitative preferences will be printed and accepted as string inputs.
 
 The Recommender computes a score for each song based on the weighted-sum proximity of the song's features to the user's preferences. The closer the song is to the user's preferences, the higher the score. This is done using a Gaussian proximity function for quantitative features, and a binary similarity matrix for qualitative features.
 
