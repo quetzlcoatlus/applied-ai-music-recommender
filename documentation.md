@@ -73,5 +73,12 @@ rock      0.0    0.0    0.1  0.3    0.4        0.2      1.0
 
 Similar binary matrix in recommender.py
 
+Extending this for the final project. I think the most applicable option is Agentic Workflow or Fine-Tuned/Specialized Model.
 
+I will start with an Agentic Workflow which can plan, act, and check its own work.
+
+Constraints:
+- Runs correctly and reproducibly: If someone follows your instructions, it should work.
+- Includes logging or guardrails: Your code should track what it does and handle errors safely.
+- Has clear setup steps: Someone else should be able to run it without guessing what to install.
 
