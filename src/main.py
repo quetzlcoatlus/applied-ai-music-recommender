@@ -1,15 +1,9 @@
 """
 Command line runner for the Music Recommender Simulation.
-
-This file helps you quickly run and test your recommender.
-
-You will implement the functions in recommender.py:
-- load_songs
-- score_song
-- recommend_songs
 """
 
-from recommender import load_songs, recommend_songs
+from recommender import load_songs
+from agent import Agent
 
 
 def main() -> None:
@@ -129,16 +123,20 @@ def main() -> None:
         low_energy_celebratory
     ]
 
-    for profile in profiles:
-        recommendations = recommend_songs(profile, songs, k=5)
+    agent = Agent()
 
-        print(f"\nTop recommendations for {profile["name"]}:\n")
-        for rec in recommendations:
-            # You decide the structure of each returned item.
-            # A common pattern is: (song, score, explanation)
-            song, score, explanation = rec
-            print(f"{song['title']} - Score: {score:.2f}")
-            print(f"Because: {explanation}")
+    for profile in profiles:
+        result = agent.run(profile, songs, k=5)
+
+        print(f"\n--- {profile['name']} ---")
+        for entry in result["logs"]:
+            print(f"[{entry['step']}] {entry['message']}")
+        print(f"Passed threshold: {result['passed_threshold']}")
+        print()
+
+        for song, score, explanation in result["recommendations"]:
+            print(f"  {song['title']} - Score: {score:.2f}")
+            print(f"  Because: {explanation}")
             print()
 
 
