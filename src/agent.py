@@ -4,13 +4,11 @@ from typing import Any, Dict, List, Optional, Tuple
 
 class Agent:
     """
-    BugHound runs a small agentic workflow:
+    Runs a small agentic workflow:
 
     1) PLAN: decide what to look for
-    2) ANALYZE: detect issues (heuristics or LLM)
     3) ACT: propose a fix (heuristics or LLM)
-    4) TEST: run simple reliability checks
-    5) REFLECT: decide whether to apply the fix automatically
+    5) CHECK: decide whether to apply the fix automatically
     """
 
     def __init__(self, client: Optional[Any] = None):
@@ -35,10 +33,10 @@ class Agent:
         # risk = assess_risk(original_code=code_snippet, fixed_code=fixed_code, issues=issues)
         # self._log("TEST", f"Risk assessed as {risk.get('level', 'unknown')} (score={risk.get('score', '-')}).")
 
-        if risk.get("should_autofix"):
-            self._log("REFLECT", "Fix appears safe enough to auto-apply under current policy.")
-        else:
-            self._log("REFLECT", "Fix is not safe enough to auto-apply. Human review recommended.")
+        # if risk.get("should_autofix"):
+        #     self._log("REFLECT", "Fix appears safe enough to auto-apply under current policy.")
+        # else:
+        #     self._log("REFLECT", "Fix is not safe enough to auto-apply. Human review recommended.")
 
         return {
             "issues": issues,
@@ -52,7 +50,7 @@ class Agent:
     def analyze(self, code_snippet: str) -> List[Dict[str, str]]:
         if not self._can_call_llm():
             self._log("ANALYZE", "Using heuristic analyzer (offline mode).")
-            return self._heuristic_analyze(code_snippet)
+            # return self._heuristic_analyze(code_snippet)
 
         self._log("ANALYZE", "Using LLM analyzer.")
         system_prompt = (
@@ -70,13 +68,13 @@ class Agent:
             raw = self.client.complete(system_prompt=system_prompt, user_prompt=user_prompt)
         except Exception as e:
             self._log("ANALYZE", f"API Error: {str(e)}. Falling back to heuristics.")
-            return self._heuristic_analyze(code_snippet)
+            # return self._heuristic_analyze(code_snippet)
 
         issues = self._parse_json_array_of_issues(raw)
 
         if issues is None:
             self._log("ANALYZE", "LLM output was not parseable JSON. Falling back to heuristics.")
-            return self._heuristic_analyze(code_snippet)
+            # return self._heuristic_analyze(code_snippet)
 
         return issues
 
@@ -87,7 +85,7 @@ class Agent:
 
         if not self._can_call_llm():
             self._log("ACT", "Using heuristic fixer (offline mode).")
-            return self._heuristic_fix(code_snippet, issues)
+            # return self._heuristic_fix(code_snippet, issues)
 
         self._log("ACT", "Using LLM fixer.")
         system_prompt = (
@@ -106,63 +104,63 @@ class Agent:
             raw = self.client.complete(system_prompt=system_prompt, user_prompt=user_prompt)
         except Exception as e:
             self._log("ACT", f"API Error: {str(e)}. Falling back to heuristic fixer.")
-            return self._heuristic_fix(code_snippet, issues)
+            # return self._heuristic_fix(code_snippet, issues)
 
         cleaned = self._strip_code_fences(raw).strip()
 
-        if not cleaned:
-            self._log("ACT", "LLM returned empty output. Falling back to heuristic fixer.")
-            return self._heuristic_fix(code_snippet, issues)
+        # if not cleaned:
+        #     self._log("ACT", "LLM returned empty output. Falling back to heuristic fixer.")
+        #     return self._heuristic_fix(code_snippet, issues)
 
         return cleaned
 
     # ----------------------------
     # Heuristic analyzer/fixer
     # ----------------------------
-    def _heuristic_analyze(self, code: str) -> List[Dict[str, str]]:
-        issues: List[Dict[str, str]] = []
+    # def _heuristic_analyze(self, code: str) -> List[Dict[str, str]]:
+    #     issues: List[Dict[str, str]] = []
 
-        if "print(" in code:
-            issues.append(
-                {
-                    "type": "Code Quality",
-                    "severity": "Low",
-                    "msg": "Found print statements. Consider using logging for non-toy code.",
-                }
-            )
+    #     if "print(" in code:
+    #         issues.append(
+    #             {
+    #                 "type": "Code Quality",
+    #                 "severity": "Low",
+    #                 "msg": "Found print statements. Consider using logging for non-toy code.",
+    #             }
+    #         )
 
-        if re.search(r"\bexcept\s*:\s*(\n|#|$)", code):
-            issues.append(
-                {
-                    "type": "Reliability",
-                    "severity": "High",
-                    "msg": "Found a bare `except:`. Catch a specific exception or use `except Exception as e:`.",
-                }
-            )
+    #     if re.search(r"\bexcept\s*:\s*(\n|#|$)", code):
+    #         issues.append(
+    #             {
+    #                 "type": "Reliability",
+    #                 "severity": "High",
+    #                 "msg": "Found a bare `except:`. Catch a specific exception or use `except Exception as e:`.",
+    #             }
+    #         )
 
-        if "TODO" in code:
-            issues.append(
-                {
-                    "type": "Maintainability",
-                    "severity": "Medium",
-                    "msg": "Found TODO comments. Unfinished logic can hide bugs or missing cases.",
-                }
-            )
+    #     if "TODO" in code:
+    #         issues.append(
+    #             {
+    #                 "type": "Maintainability",
+    #                 "severity": "Medium",
+    #                 "msg": "Found TODO comments. Unfinished logic can hide bugs or missing cases.",
+    #             }
+    #         )
 
-        return issues
+    #     return issues
 
-    def _heuristic_fix(self, code: str, issues: List[Dict[str, str]]) -> str:
-        fixed = code
+    # def _heuristic_fix(self, code: str, issues: List[Dict[str, str]]) -> str:
+    #     fixed = code
 
-        if any(i.get("type") == "Reliability" for i in issues):
-            fixed = re.sub(r"\bexcept\s*:\s*", "except Exception as e:\n        # [BugHound] log or handle the error\n        ", fixed)
+    #     if any(i.get("type") == "Reliability" for i in issues):
+    #         fixed = re.sub(r"\bexcept\s*:\s*", "except Exception as e:\n        # [BugHound] log or handle the error\n        ", fixed)
 
-        if any(i.get("type") == "Code Quality" for i in issues):
-            if "import logging" not in fixed:
-                fixed = "import logging\n\n" + fixed
-            fixed = fixed.replace("print(", "logging.info(")
+    #     if any(i.get("type") == "Code Quality" for i in issues):
+    #         if "import logging" not in fixed:
+    #             fixed = "import logging\n\n" + fixed
+    #         fixed = fixed.replace("print(", "logging.info(")
 
-        return fixed
+    #     return fixed
 
     # ----------------------------
     # Parsing + utilities

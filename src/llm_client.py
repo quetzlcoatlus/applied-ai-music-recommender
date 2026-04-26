@@ -1,20 +1,6 @@
 import os
 from typing import Optional
-
-
-class MockClient:
-    """
-    Offline stand-in for an LLM client.
-    This lets the app run without an API key.
-    """
-
-    def complete(self, system_prompt: str, user_prompt: str) -> str:
-        # Very small, predictable behavior for demos.
-        if "Return ONLY valid JSON" in system_prompt:
-            # Purposely not JSON to force fallback unless students change behavior.
-            return "I found some issues, but I'm not returning JSON right now."
-        return "# MockClient: no rewrite available in offline mode.\n"
-
+from google import genai
 
 class GeminiClient:
     """
@@ -31,9 +17,6 @@ class GeminiClient:
             raise RuntimeError(
                 "Missing GEMINI_API_KEY. Create a .env file and set GEMINI_API_KEY=..."
             )
-
-        # Import here so heuristic mode doesn't require the dependency at import time.
-        from google import genai
 
         self.client = genai.Client(api_key=api_key)
         self.model_name = model_name

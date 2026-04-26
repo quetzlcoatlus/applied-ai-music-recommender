@@ -17,6 +17,7 @@ def main() -> None:
     print(f"Loaded songs: {len(songs)}")
 
     pop_happy = {
+        "name": "Pop Happy",
         "genre": "pop",
         "mood": "happy",
         "energy": 0.70,
@@ -26,6 +27,7 @@ def main() -> None:
     }
 
     energetic_pop = {
+        "name": "Energetic Pop",
         "genre": "pop",
         "mood": "intense",
         "energy": 1.00,
@@ -35,6 +37,7 @@ def main() -> None:
     }
 
     chill_lofi = {
+        "name": "Chill Lofi",
         "genre": "lofi",
         "mood": "chill",
         "energy": 0.20,
@@ -44,6 +47,7 @@ def main() -> None:
     }
 
     deep_intense_rock = {
+        "name": "Deep Intense Rock",
         "genre": "rock",
         "mood": "intense",
         "energy": 1.00,
@@ -53,6 +57,7 @@ def main() -> None:
     }
 
     undecided_listener = {
+        "name": "Undecided Listener",
         "genre": "pop",
         "mood": "relaxed",
         "energy": 0.5,
@@ -62,6 +67,7 @@ def main() -> None:
     }
 
     classical_intense = {
+        "name": "Classical Intense",
         "genre": "classical",
         "mood": "intense",
         "energy": 0.9,
@@ -71,6 +77,7 @@ def main() -> None:
     }
 
     all_maximums = {
+        "name": "All Maximums",
         "genre": "hip hop",
         "mood": "spirited",
         "energy": 1.0,
@@ -80,6 +87,7 @@ def main() -> None:
     }
 
     all_minimums = {
+        "name": "All Minimums",
         "genre": "classical",
         "mood": "yearning",
         "energy": 0.0,
@@ -89,6 +97,7 @@ def main() -> None:
     }
 
     high_energy_melancholic = {
+        "name": "High Energy Melancholic",
         "genre": "metal",
         "mood": "melancholic",
         "energy": 0.95,
@@ -98,6 +107,7 @@ def main() -> None:
     }
 
     low_energy_celebratory = {
+        "name": "Low Energy Celebratory",
         "genre": "ambient",
         "mood": "celebratory",
         "energy": 0.1,
@@ -122,7 +132,7 @@ def main() -> None:
     for profile in profiles:
         recommendations = recommend_songs(profile, songs, k=5)
 
-        print("\nTop recommendations:\n")
+        print(f"\nTop recommendations for {profile["name"]}:\n")
         for rec in recommendations:
             # You decide the structure of each returned item.
             # A common pattern is: (song, score, explanation)

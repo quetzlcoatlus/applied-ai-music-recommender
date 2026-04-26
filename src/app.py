@@ -4,7 +4,7 @@ import streamlit as st
 from dotenv import load_dotenv
 
 from agent import Agent
-from llm_client import GeminiClient, MockClient
+from llm_client import GeminiClient
 
 # ----------------------------
 # App setup
