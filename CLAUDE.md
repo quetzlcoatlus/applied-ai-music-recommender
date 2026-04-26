@@ -1,0 +1,2 @@
+
+Implement one feature at a time, so that it can be version controlled and tested independently. This will allow for easier debugging and ensure that each feature is working correctly before moving on to the next one.

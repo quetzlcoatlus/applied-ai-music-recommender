@@ -73,6 +73,8 @@ rock      0.0    0.0    0.1  0.3    0.4        0.2      1.0
 
 Similar binary matrix in recommender.py
 
+---
+
 Extending this for the final project. I think the most applicable option is Agentic Workflow or Fine-Tuned/Specialized Model.
 
 I will start with an Agentic Workflow which can plan, act, and check its own work.

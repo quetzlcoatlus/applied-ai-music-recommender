@@ -44,7 +44,6 @@ class Recommender:
 
     def recommend(self, user: UserProfile, k: int = 5) -> List[Song]:
         """Return the top-k songs ranked by score for the given user profile."""
-        # TODO: Implement recommendation logic
         return self.songs[:k]
 
     def explain_recommendation(self, user: UserProfile, song: Song) -> str:
