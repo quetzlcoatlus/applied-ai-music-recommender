@@ -2,8 +2,12 @@
 Command line runner for the Music Recommender Simulation.
 """
 
+from dotenv import load_dotenv
 from recommender import load_songs
 from agent import Agent
+from llm_client import GeminiClient
+
+load_dotenv()
 
 
 def main() -> None:
@@ -111,19 +115,24 @@ def main() -> None:
     }
 
     profiles = [
-        pop_happy,
-        energetic_pop,
+        # pop_happy,
+        # energetic_pop,
         chill_lofi,
-        deep_intense_rock,
-        undecided_listener,
-        classical_intense,
-        all_maximums,
-        all_minimums,
-        high_energy_melancholic,
-        low_energy_celebratory
+        # deep_intense_rock,
+        # undecided_listener,
+        # classical_intense,
+        # all_maximums,
+        # all_minimums,
+        # high_energy_melancholic,
+        # low_energy_celebratory
     ]
 
-    agent = Agent()
+    try: 
+        client = GeminiClient()
+    except RuntimeError as e:
+        print(f"Warning: {e}. Running without Gemini.")
+        client = None
+    agent = Agent(client=client)
 
     for profile in profiles:
         result = agent.run(profile, songs, k=5)
