@@ -3,15 +3,16 @@ import os
 import re
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-from similarity_matrices import GENRE_SIMILARITY
+from similarity_matrices import GENRE_SIMILARITY, MOOD_SIMILARITY
 from llm_client import GeminiClient
 
 DEFAULT_WEIGHTS: Dict[str, float] = {
-    "genre":        0.19,
-    "energy":       0.24,
-    "valence":      0.19,
-    "danceability": 0.19,
-    "acousticness": 0.19,
+    "genre":        0.15,
+    "mood":         0.20,
+    "energy":       0.20,
+    "valence":      0.15,
+    "danceability": 0.15,
+    "acousticness": 0.15,
 }
 
 SCORE_THRESHOLD = 0.8
@@ -99,7 +100,7 @@ class Agent:
             f"threshold ({threshold}). Rewrite score_song(user_prefs, song) to better match this "
             "user profile. Rules:\n"
             "- Signature must stay: score_song(user_prefs: Dict, song: Dict) -> Tuple[float, str]\n"
-            "- You may use `math` and `GENRE_SIMILARITY` (both already in scope).\n"
+            "- You may use `math`, `GENRE_SIMILARITY`, and `MOOD_SIMILARITY` (all already in scope).\n"
             "- Return ONLY the complete Python function definition. "
             "No markdown fences, no imports, no explanation."
         )
@@ -123,6 +124,7 @@ class Agent:
         namespace: Dict[str, Any] = {
             "math": math,
             "GENRE_SIMILARITY": GENRE_SIMILARITY,
+            "MOOD_SIMILARITY": MOOD_SIMILARITY,
             # typing symbols Gemini may use in annotations
             "Dict": Dict, "List": List, "Tuple": Tuple,
             "Any": Any, "Optional": Optional,

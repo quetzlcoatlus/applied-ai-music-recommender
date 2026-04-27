@@ -1,1 +1,0 @@
-Your job is to identify potential problems in Python code that could affect how accurate a user's music recommendations are based on their profile and received scores.
