@@ -8,14 +8,6 @@ Music Master 1.0
 
 ## 2. Intended Use  
 
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration
-
 This music recommender is designed to generate personalized song recommendations based on a user's preferences for various musical features. It assumes that users have specific tastes and preferences that can be quantified on a scale from 0 to 1 for each feature. The recommender is intended for classroom exploration to demonstrate how different scoring logic can impact the recommendations generated for users with varying preferences.
 
 This system shouldn't be used in a real-world application without significant improvements, as it currently has limitations in terms of diversity and fairness in recommendations.
@@ -24,17 +16,6 @@ This system shouldn't be used in a real-world application without significant im
 
 ## 3. How the Model Works  
 
-Explain your scoring approach in simple language.  
-
-Prompts:  
-
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
-
 The model uses several features of each song, including genre, mood, energy, valence, danceability, and acousticness. Each user has preferences for these features, which are represented as values between 0 and 1. The model calculates a score for each song by comparing the song's features to the user's preferences. For the energy, valence, danceability, and acousticness features, the model uses a Gaussian proximity function to assign higher scores to songs that are closer to the user's preferences and lower scores to those that are farther away. For the genre and mood features, the model uses a similarity matrix to determine how closely the song's genre and mood match the user's preferences. The overall score for each song is a weighted sum of these components, with the weights adjusted based on experimentation to better capture user preferences.
 
 I changed the UserProfile to include additional features. I also adjusted the weights for each feature in the overall scoring formula to better reflect their importance in the recommendation process. I also implemented a more nuanced similarity matrix for genres and moods to capture the relationships between different musical styles more effectively.
@@ -42,15 +23,6 @@ I changed the UserProfile to include additional features. I also adjusted the we
 ---
 
 ## 4. Data  
-
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset
 
 The dataset contains a catalog of 20 songs. The genres represented in the dataset include:
 - pop
@@ -88,34 +60,17 @@ The moods represented include:
 - celebratory
 - romantic
 
-I asked GitHubCopilot to add 10 songs to the original dataset, which had only 10 songs. I aimed to include a wider variety of genres and moods to create a more diverse catalog for the recommender system. However, the dataset still has limitations in terms of representing the full spectrum of musical tastes, as it may not include certain niche genres or moods that some users might prefer. Additionally, the dataset is relatively small, which can limit the diversity of recommendations and may not capture the full range of musical preferences that users might have. Some songs have the only genre or mood in the dataset, which can lead to isolation for users who prefer those genres or moods.
+I asked GitHub Copilot to add 10 songs to the original dataset, which had only 10 songs. I aimed to include a wider variety of genres and moods to create a more diverse catalog for the recommender system. However, the dataset still has limitations in terms of representing the full spectrum of musical tastes, as it may not include certain niche genres or moods that some users might prefer. Additionally, the dataset is relatively small, which can limit the diversity of recommendations and may not capture the full range of musical preferences that users might have. Some songs have the only genre or mood in the dataset, which can lead to isolation for users who prefer those genres or moods.
 
 ---
 
 ## 5. Strengths  
-
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
 
 The system seems to work well for users with mainstream preferences, such as pop fans, who receive a higher number of high-scoring recommendations due to the dataset's bias towards pop songs and the similarity matrix's connections. The scoring captures the proximity of song features to user preferences effectively, allowing for personalized recommendations based on energy, valence, danceability, and acousticness. For example, a user with moderate preferences for these features receives recommendations that closely match their tastes, which aligns with my intuition about how a music recommender should function. Additionally, the use of a similarity matrix for genres and moods allows for more nuanced recommendations that can capture the relationships between different musical styles, providing users with a broader range of options that still align with their preferences.
 
 ---
 
 ## 6. Limitations and Bias 
-
-Where the system struggles or behaves unfairly. 
-
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
 
 Because of the Gaussian proximity function, users with extreme preferences (e.g., energy=0.95 or 0.05) are heavily penalized for any song that does not match their preference closely, leading to very low scores and poor recommendations. This can create a feedback loop where users with niche tastes receive fewer and less relevant recommendations, reinforcing their isolation from the broader music catalog.
 
@@ -124,17 +79,6 @@ Pop fans receive significantly more high-scoring recommendations than fans of le
 ---
 
 ## 7. Evaluation  
-
-How you checked whether the recommender behaved as expected. 
-
-Prompts:  
-
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
-
-No need for numeric metrics unless you created some.
 
 Others visible in main.py, using the first 3 user profiles:
 - pop_happy
@@ -155,15 +99,6 @@ I also ran a simple test where I removed the mood similarity component from the 
 
 ## 8. Future Work  
 
-Ideas for how you would improve the model next.  
-
-Prompts:  
-
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
-
 To improve the model, I would consider weighing more features to capture a wider range of musical preferences, such as tempo and artist within a larger data set. This could help provide more personalized recommendations that better reflect individual tastes.
 
 I would also work on improving the explainability of the recommendations by providing users with insights into why certain songs were recommended based on their preferences and the features of the songs.
@@ -175,14 +110,6 @@ Finally, to handle more complex user tastes, I would consider implementing a mor
 ---
 
 ## 9. Personal Reflection  
-
-A few sentences about your experience.  
-
-Prompts:  
-
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
 
 My biggest learning moment was understanding how the scoring mechanism could penalize users with extreme preferences, leading to very low scores and poor recommendations for those users. This experience has made me more aware of the importance of considering the underlying data and scoring mechanisms when evaluating music recommendation apps, and it has me curious about how real world systems implement these features and the need for continuous improvement to ensure that these systems provide personalized and diverse recommendations.
 
